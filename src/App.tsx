@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { memo, useCallback, useEffect, useState } from 'react';
 
 import { api } from './services/api';
 
@@ -27,7 +27,7 @@ interface MovieProps {
   Runtime: string;
 }
 
-export function App() {
+function AppComponent() {
   const [genres, setGenres] = useState<GenreResponseProps[]>([]);
   const [movies, setMovies] = useState<MovieProps[]>([]);
   const [selectedGenreId, setSelectedGenreId] = useState(1);
@@ -49,18 +49,22 @@ export function App() {
     });
   }, [selectedGenreId]);
 
+  const handleClickButton = useCallback((id: number) => {
+    setSelectedGenreId(id);
+  }, []);
+
   return (
     <div style={{ display: 'flex', flexDirection: 'row' }}>
 
-      <SideBar selectedGenreId={selectedGenreId} genres={genres} setSelectedGenreId={setSelectedGenreId} />
+      <SideBar selectedGenreId={selectedGenreId} genres={genres} buttonClickCallback={handleClickButton} />
 
       <div className="container">
-        <header>
-          <span className="category">Categoria:<span> {selectedGenre.title}</span></span>
-        </header>
 
-        <Content movies={movies} />
+
+        <Content movies={movies} selectedGenre={selectedGenre} />
       </div>
     </div>
   )
 }
+
+export const App = memo(AppComponent);

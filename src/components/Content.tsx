@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { memo, useEffect, useState } from "react";
 
 import { api } from "../services/api";
 
@@ -15,13 +15,24 @@ interface MovieProps {
   Runtime: string;
 }
 
-interface ContentProps {
-  movies: MovieProps[];
+interface GenreProps {
+  id: number;
+  name: 'action' | 'comedy' | 'documentary' | 'drama' | 'horror' | 'family';
+  title: string;
 }
 
-export function Content({ movies }: ContentProps) {
+interface ContentProps {
+  movies: MovieProps[];
+  selectedGenre: GenreProps;
+}
+
+function ContentComponent({ movies, selectedGenre }: ContentProps) {
   return (
     <main>
+      <header>
+        <span className="category">Categoria:<span> {selectedGenre.title}</span></span>
+      </header>
+
       <div className="movies-list">
         {movies.map(movie => (
           <MovieCard key={movie.imdbID} title={movie.Title} poster={movie.Poster} runtime={movie.Runtime} rating={movie.Ratings[0].Value} />
@@ -30,3 +41,7 @@ export function Content({ movies }: ContentProps) {
     </main>
   );
 }
+
+export const Content = memo(ContentComponent, (prevProps, nextProps) => {
+  return Object.is(prevProps, nextProps);
+});

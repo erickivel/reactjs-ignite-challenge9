@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { Button } from "./Button";
 
 interface GenreResponseProps {
@@ -9,12 +10,12 @@ interface GenreResponseProps {
 interface SideBarProps {
   genres: GenreResponseProps[];
   selectedGenreId: number
-  setSelectedGenreId: (id: number) => void;
+  buttonClickCallback: (id: number) => void;
 }
 
-export function SideBar({ selectedGenreId, genres, setSelectedGenreId }: SideBarProps) {
+function SideBarComponent({ selectedGenreId, genres, buttonClickCallback }: SideBarProps) {
   function handleClickButton(id: number) {
-    setSelectedGenreId(id);
+    buttonClickCallback(id);
   }
 
   return (
@@ -35,3 +36,7 @@ export function SideBar({ selectedGenreId, genres, setSelectedGenreId }: SideBar
     </nav>
   );
 }
+
+export const SideBar = memo(SideBarComponent, (prevProps, nextProps) => {
+  return Object.is(prevProps, nextProps);
+});
